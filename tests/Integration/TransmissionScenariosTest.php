@@ -105,6 +105,6 @@ final class TransmissionScenariosTest extends KernelTestCase
         self::assertNotNull($log);
         self::assertSame(TransmissionStatus::ERROR, $log->status());
         self::assertStringContainsString('Unknown transmission status "magically_accepted"', (string) $log->message());
-        self::assertSame(0, (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM tmonier_einvoice_transmission WHERE status = ?', ['magically_accepted']));
+        self::assertSame([], $this->connection()->fetchAllAssociative('SELECT invoice_id FROM tmonier_einvoice_transmission WHERE status = ?', ['magically_accepted']));
     }
 }

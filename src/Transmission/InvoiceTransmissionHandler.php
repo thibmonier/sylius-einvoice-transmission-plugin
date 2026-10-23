@@ -14,12 +14,12 @@ use Tmonier\SyliusEinvoiceTransmissionPlugin\Status\UnknownTransmissionStatus;
  * An invoice claimed and not answered (the process died) stays "not transmitted": it is never
  * sent a second time by a replay.
  */
-final class InvoiceTransmissionHandler
+final readonly class InvoiceTransmissionHandler
 {
     public function __construct(
-        private readonly InvoiceTransmitterInterface $transmitter,
-        private readonly TransmissionJournalInterface $journal,
-        private readonly LoggerInterface $logger,
+        private InvoiceTransmitterInterface $transmitter,
+        private TransmissionJournalInterface $journal,
+        private LoggerInterface $logger,
     ) {
     }
 

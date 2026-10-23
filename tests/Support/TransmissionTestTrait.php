@@ -22,10 +22,7 @@ trait TransmissionTestTrait
 {
     private function connection(): Connection
     {
-        /** @var \Doctrine\Bundle\DoctrineBundle\Registry $doctrine */
-        $doctrine = self::getContainer()->get('doctrine');
-
-        return $doctrine->getConnection();
+        return $this->entityManager()->getConnection();
     }
 
     private function entityManager(): EntityManagerInterface
@@ -64,6 +61,6 @@ trait TransmissionTestTrait
 
     private function loggedCount(): int
     {
-        return (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM tmonier_einvoice_transmission');
+        return \count($this->connection()->fetchAllAssociative('SELECT invoice_id FROM tmonier_einvoice_transmission'));
     }
 }

@@ -10,17 +10,15 @@ namespace Tmonier\SyliusEinvoiceTransmissionPlugin\Entity;
  */
 class InvoiceTransmission
 {
-    private string $invoiceId;
-
-    private string $invoiceNumber;
-
-    private string $status;
-
-    private ?string $message = null;
-
-    private \DateTimeImmutable $createdAt;
-
-    private \DateTimeImmutable $updatedAt;
+    public function __construct(
+        private string $invoiceId,
+        private string $invoiceNumber,
+        private string $status,
+        private ?string $message,
+        private \DateTimeImmutable $createdAt,
+        private \DateTimeImmutable $updatedAt,
+    ) {
+    }
 
     public function invoiceId(): string
     {

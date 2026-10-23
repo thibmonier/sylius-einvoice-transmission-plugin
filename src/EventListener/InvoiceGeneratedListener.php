@@ -10,11 +10,11 @@ use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\InvoiceTransmissionHan
 use Tmonier\SyliusFacturXPlugin\Event\FacturXInvoiceGenerated;
 
 /** Listens to `tmonier_facturx.invoice_generated`. Whatever happens, the generation of the invoice goes on. */
-final class InvoiceGeneratedListener
+final readonly class InvoiceGeneratedListener
 {
     public function __construct(
-        private readonly InvoiceTransmissionHandler $handler,
-        private readonly LoggerInterface $logger,
+        private InvoiceTransmissionHandler $handler,
+        private LoggerInterface $logger,
     ) {
     }
 

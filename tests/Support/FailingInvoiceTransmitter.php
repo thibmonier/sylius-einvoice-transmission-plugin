@@ -9,9 +9,9 @@ use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\InvoiceTransmitterInte
 use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\TransmissionResult;
 
 /** An adapter whose platform is down: it always throws. */
-final class FailingInvoiceTransmitter implements InvoiceTransmitterInterface
+final readonly class FailingInvoiceTransmitter implements InvoiceTransmitterInterface
 {
-    public function __construct(private readonly \Throwable $failure)
+    public function __construct(private \Throwable $failure)
     {
     }
 

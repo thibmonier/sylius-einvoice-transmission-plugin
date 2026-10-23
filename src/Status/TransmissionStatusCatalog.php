@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tmonier\SyliusEinvoiceTransmissionPlugin\Status;
 
 /** The statuses a send can have: the built-in ones, plus those the application declares. */
-final class TransmissionStatusCatalog
+final readonly class TransmissionStatusCatalog
 {
     /** @var list<string> */
-    private readonly array $statuses;
+    private array $statuses;
 
     /** @param list<string> $additional */
     public function __construct(array $additional = [])

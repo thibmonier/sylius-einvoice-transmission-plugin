@@ -19,6 +19,7 @@
         <env name="SYLIUS_TEST_APP_BUNDLES_PATH" value="tests/TestApplication/config/bundles.php"/>
         <env name="SYLIUS_TEST_APP_CONFIGS_TO_IMPORT" value="@TmonierSyliusEinvoiceTransmissionPlugin/tests/TestApplication/config/config.yaml"/>
 
+        <ini name="memory_limit" value="1G"/>
         <env name="APP_SECRET" value="''" />
         <env name="APP_ENV" value="test"/>
     </php>

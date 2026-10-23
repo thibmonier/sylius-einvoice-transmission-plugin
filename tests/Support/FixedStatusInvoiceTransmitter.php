@@ -9,9 +9,9 @@ use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\InvoiceTransmitterInte
 use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\TransmissionResult;
 
 /** An adapter that answers any status, known or not. */
-final class FixedStatusInvoiceTransmitter implements InvoiceTransmitterInterface
+final readonly class FixedStatusInvoiceTransmitter implements InvoiceTransmitterInterface
 {
-    public function __construct(private readonly string $status)
+    public function __construct(private string $status)
     {
     }
 

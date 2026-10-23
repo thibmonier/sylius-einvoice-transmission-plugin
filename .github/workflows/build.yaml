@@ -82,6 +82,9 @@ jobs:
 
         env:
             APP_ENV: test
+            # No tests/TestApplication/.env* files: the test application is configured here and in phpunit.xml.dist.
+            SYLIUS_TEST_APP_BUNDLES_PATH: tests/TestApplication/config/bundles.php
+            SYLIUS_TEST_APP_CONFIGS_TO_IMPORT: "@TmonierSyliusEinvoiceTransmissionPlugin/tests/TestApplication/config/config.yaml"
 
         steps:
             -

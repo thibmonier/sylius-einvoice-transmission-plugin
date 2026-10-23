@@ -16,16 +16,16 @@ use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\InvoiceDocument;
  * Writes with DBAL and not with the entity manager: a refused insert (the invoice is already
  * logged) closes an entity manager, and this one is shared with the generation of the invoice.
  */
-final class DbalTransmissionJournal implements TransmissionJournalInterface
+final readonly class DbalTransmissionJournal implements TransmissionJournalInterface
 {
     public const TABLE = 'tmonier_einvoice_transmission';
 
     private const MAX_MESSAGE_LENGTH = 2000;
 
     public function __construct(
-        private readonly Connection $connection,
-        private readonly ClockInterface $clock,
-        private readonly TransmissionStatusCatalog $catalog,
+        private Connection $connection,
+        private ClockInterface $clock,
+        private TransmissionStatusCatalog $catalog,
     ) {
     }
 
