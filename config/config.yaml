@@ -1,0 +1,2 @@
+# No grid and no Twig hook yet (the admin screens are a later story): the services and the mapping
+# are loaded by the extension of the bundle.
