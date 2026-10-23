@@ -1,0 +1,10 @@
+imports:
+    - { resource: "@TmonierSyliusEinvoiceTransmissionPlugin/config/config.yaml" }
+    - { resource: "dbal_savepoints.php" }
+
+when@test:
+    services:
+        # Public so that the tests can read what the default configuration wires.
+        test.tmonier_einvoice.transmitter:
+            alias: tmonier_einvoice.transmitter
+            public: true

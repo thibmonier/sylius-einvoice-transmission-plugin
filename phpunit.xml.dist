@@ -13,6 +13,12 @@
         <server name="IS_DOCTRINE_ORM_SUPPORTED" value="true"/>
         <server name="EXPECTED_RESPONSE_DIR" value="../Responses/Expected"/>
 
+        <!-- The test application is configured here and in the CI, not in tests/TestApplication/.env* files.
+             Real environment variables win over these defaults (the CI sets its own DATABASE_URL). -->
+        <env name="DATABASE_URL" value="mysql://root@127.0.0.1:3351/tmonier_sylius_einvoice_transmission_test"/>
+        <env name="SYLIUS_TEST_APP_BUNDLES_PATH" value="tests/TestApplication/config/bundles.php"/>
+        <env name="SYLIUS_TEST_APP_CONFIGS_TO_IMPORT" value="@TmonierSyliusEinvoiceTransmissionPlugin/tests/TestApplication/config/config.yaml"/>
+
         <env name="APP_SECRET" value="''" />
         <env name="APP_ENV" value="test"/>
     </php>
