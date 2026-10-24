@@ -49,6 +49,8 @@ bin/console doctrine:migrations:migrate
 tmonier_sylius_einvoice_transmission:
     # Identifiant de votre service qui implémente InvoiceTransmitterInterface (défaut : l'adaptateur nul)
     transmitter: App\Einvoice\MyPlatformTransmitter
+    # Identifiant de votre service qui implémente InvoiceDocumentProviderInterface (facultatif, active la relance)
+    document_provider: App\Einvoice\MyInvoiceDocuments
     # Statuts que votre adaptateur peut renvoyer en plus des quatre ci-dessous (snake_case en minuscules)
     additional_statuses: []
 ```
@@ -75,6 +77,17 @@ final class MyPlatformTransmitter implements InvoiceTransmitterInterface
 
 `RecordingInvoiceTransmitter` (espace de noms `Testing`) est un double de test qui garde ce qu'il reçoit et renvoie un résultat fixe.
 
+## Relancer un envoi en erreur
+
+Un envoi au statut `error` peut être renvoyé. Fournissez un service qui rend la facture générée à partir de son identifiant (`InvoiceDocumentProviderInterface::provide()`), déclarez-le dans `document_provider`, puis appelez `RelaunchTransmissionHandler::relaunch($invoiceId)` :
+
+- la ligne du journal est rouverte (même ligne, statut `not_transmitted`) par une seule mise à jour conditionnelle : deux relances simultanées n'envoient qu'une fois ;
+- l'adaptateur est appelé une fois et sa réponse est journalisée comme pour le premier envoi ;
+- tout autre statut (`deposited`, `rejected`, `not_transmitted`) ou une facture inconnue est refusé par `TransmissionNotRelaunchable`, sans aucun envoi ;
+- si le document ne peut pas être fourni, la ligne repasse en `error` avec le message de l'échec et peut être relancée de nouveau.
+
+`TransmissionJournalInterface` a gagné `reopen()` en 0.2.0 : un journal personnalisé doit l'implémenter.
+
 ## Statuts
 
 | Statut | Signification |
@@ -89,7 +102,7 @@ final class MyPlatformTransmitter implements InvoiceTransmitterInterface
 ## Limites de cette tranche
 
 - Aucune plateforme réelle : seuls le port, le journal et l'adaptateur nul sont fournis.
-- Pas de reprise : une ligne en `error` ou `not_transmitted` n'est pas renvoyée par un événement rejoué. Un processus qui s'arrête entre la prise en charge de la facture et la réponse de l'adaptateur laisse la ligne en `not_transmitted`.
+- Pas de reprise automatique : une ligne en `error` ou `not_transmitted` n'est pas renvoyée par un événement rejoué ; un envoi en erreur se relance explicitement (voir plus haut). Un processus qui s'arrête entre la prise en charge de la facture et la réponse de l'adaptateur laisse la ligne en `not_transmitted`.
 - Pas d'écran d'administration, pas de consultation d'annuaire, pas d'e-reporting.
 - Le plugin est une brique technique. Il ne constitue ni un conseil juridique ni un conseil fiscal et n'a aucune valeur réglementaire par lui-même.
 

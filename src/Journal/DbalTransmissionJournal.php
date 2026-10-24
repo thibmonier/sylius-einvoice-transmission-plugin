@@ -69,4 +69,18 @@ final readonly class DbalTransmissionJournal implements TransmissionJournalInter
             'updated_at' => Types::DATETIME_IMMUTABLE,
         ]);
     }
+
+    public function reopen(string $invoiceId): bool
+    {
+        // One conditional UPDATE: the status is checked and changed in the same statement, so only one process wins.
+        $reopened = $this->connection->update(self::TABLE, [
+            'status' => TransmissionStatus::NOT_TRANSMITTED,
+            'message' => null,
+            'updated_at' => $this->clock->now(),
+        ], ['invoice_id' => $invoiceId, 'status' => TransmissionStatus::ERROR], [
+            'updated_at' => Types::DATETIME_IMMUTABLE,
+        ]);
+
+        return 1 === $reopened;
+    }
 }
