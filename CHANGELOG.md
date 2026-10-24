@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-24
+
 ### Added
 - Relaunch of a send in error: `RelaunchTransmissionHandler`, `InvoiceDocumentProviderInterface` (option `document_provider`) and `TransmissionNotRelaunchable`.
 - `TransmissionJournalInterface::reopen()` (one conditional update, same line, only for the status `error`). A custom journal has to implement it.
@@ -23,5 +25,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - Idempotent listener of `tmonier_facturx.invoice_generated`: a failing adapter or an unknown status is logged as `error` and never breaks the generation of the invoice.
 - `NullInvoiceTransmitter` (default) and `RecordingInvoiceTransmitter` test double.
 
-[Unreleased]: https://github.com/thibmonier/sylius-einvoice-transmission-plugin/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/thibmonier/sylius-einvoice-transmission-plugin/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/thibmonier/sylius-einvoice-transmission-plugin/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/thibmonier/sylius-einvoice-transmission-plugin/releases/tag/v0.1.0
