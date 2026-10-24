@@ -49,6 +49,8 @@ bin/console doctrine:migrations:migrate
 tmonier_sylius_einvoice_transmission:
     # Id of your service that implements InvoiceTransmitterInterface (default: the null adapter)
     transmitter: App\Einvoice\MyPlatformTransmitter
+    # Id of your service that implements InvoiceDocumentProviderInterface (optional, enables the relaunch)
+    document_provider: App\Einvoice\MyInvoiceDocuments
     # Statuses your adapter may answer in addition to the four below (lower snake case)
     additional_statuses: []
 ```
@@ -75,6 +77,17 @@ final class MyPlatformTransmitter implements InvoiceTransmitterInterface
 
 `RecordingInvoiceTransmitter` (namespace `Testing`) is a test double that keeps what it receives and answers a fixed result.
 
+## Relaunching a send in error
+
+A send whose status is `error` can be sent again. Give the plugin a service that returns the generated invoice from its identifier (`InvoiceDocumentProviderInterface::provide()`), declare it as `document_provider`, then call `RelaunchTransmissionHandler::relaunch($invoiceId)`:
+
+- the line of the journal is reopened (same line, status `not_transmitted`) by one conditional update, so two relaunches at once send once;
+- the adapter is called once and its answer is logged as for the first send;
+- any other status (`deposited`, `rejected`, `not_transmitted`) or an unknown invoice is refused with `TransmissionNotRelaunchable`, and nothing is sent;
+- if the document cannot be provided, the line goes back to `error` with the message of the failure and can be relaunched again.
+
+`TransmissionJournalInterface` gained `reopen()` in 0.2.0: a custom journal has to implement it.
+
 ## Statuses
 
 | Status | Meaning |
@@ -89,7 +102,7 @@ final class MyPlatformTransmitter implements InvoiceTransmitterInterface
 ## Limits of this slice
 
 - No real platform: only the port, the log and the null adapter are provided.
-- No retry: a line in `error` or `not_transmitted` is not sent again by a replayed event. A process that dies between the claim of the invoice and the answer of the adapter leaves the line in `not_transmitted`.
+- No automatic retry: a line in `error` or `not_transmitted` is not sent again by a replayed event; a send in error is relaunched explicitly (see above). A process that dies between the claim of the invoice and the answer of the adapter leaves the line in `not_transmitted`.
 - No admin screen, no directory lookup, no e-reporting.
 - The plugin is a technical building block. It is not legal or tax advice and has no regulatory value by itself.
 

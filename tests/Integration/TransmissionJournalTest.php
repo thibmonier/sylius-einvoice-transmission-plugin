@@ -35,6 +35,24 @@ final class TransmissionJournalTest extends KernelTestCase
         self::assertSame([], array_values($own));
     }
 
+    public function testTheTableHasTheCollationOfTheSyliusTablesSoThatItCanBeJoinedToThem(): void
+    {
+        if (!$this->connection()->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform) {
+            self::markTestSkipped('Collations are a MySQL and MariaDB matter.');
+        }
+
+        $collation = $this->connection()->fetchOne(
+            'SELECT TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+            ['tmonier_einvoice_transmission'],
+        );
+        $syliusCollation = $this->connection()->fetchOne(
+            'SELECT TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+            ['sylius_order'],
+        );
+
+        self::assertSame($syliusCollation, $collation);
+    }
+
     public function testTheDatabaseRefusesASecondLineForTheSameInvoice(): void
     {
         $this->journal()->open($this->document('invoice-1'));

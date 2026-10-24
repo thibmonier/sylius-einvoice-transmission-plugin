@@ -16,6 +16,12 @@ interface TransmissionJournalInterface
      */
     public function open(InvoiceDocument $document): bool;
 
+    /**
+     * Opens again the line of an invoice whose send ended in error, as "not transmitted", and keeps the line (its creation date
+     * included). False for any other status or an unknown invoice, and for the loser of two reopenings at once.
+     */
+    public function reopen(string $invoiceId): bool;
+
     /** @throws UnknownTransmissionStatus when the status is not in the catalog (nothing is written) */
     public function record(string $invoiceId, string $status, ?string $message): void;
 }

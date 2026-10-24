@@ -29,6 +29,12 @@ final readonly class InvoiceTransmissionHandler
             return;
         }
 
+        $this->deliver($document);
+    }
+
+    /** Sends a document whose line of the journal is open (claimed by handle() or reopened by a relaunch) and logs the answer. */
+    public function deliver(InvoiceDocument $document): void
+    {
         try {
             $result = $this->transmitter->transmit($document);
         } catch (\Throwable $exception) {

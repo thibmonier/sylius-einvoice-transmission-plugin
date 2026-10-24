@@ -9,6 +9,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Tmonier\SyliusEinvoiceTransmissionPlugin\DependencyInjection\TmonierSyliusEinvoiceTransmissionExtension;
 use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\NullInvoiceTransmitter;
+use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\RelaunchTransmissionHandler;
 
 final class TmonierSyliusEinvoiceTransmissionExtensionTest extends TestCase
 {
@@ -38,6 +39,16 @@ final class TmonierSyliusEinvoiceTransmissionExtensionTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
 
         $this->loaded(['additional_statuses' => ['Not Valid!']]);
+    }
+
+    public function testTheRelaunchIsOnlyAvailableOnceTheApplicationGivesItsDocumentProvider(): void
+    {
+        self::assertFalse($this->loaded([])->hasDefinition(RelaunchTransmissionHandler::class));
+
+        $container = $this->loaded(['document_provider' => 'app.invoice_documents']);
+
+        self::assertTrue($container->hasDefinition(RelaunchTransmissionHandler::class));
+        self::assertSame('app.invoice_documents', (string) $container->getAlias('tmonier_einvoice.document_provider'));
     }
 
     /** @param array<string, mixed> $config */
