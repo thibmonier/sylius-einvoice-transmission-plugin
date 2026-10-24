@@ -28,6 +28,11 @@ final class InvoiceGeneratedListenerTest extends TestCase
             {
                 throw new \RuntimeException('Database is gone');
             }
+
+            public function reopen(string $invoiceId): bool
+            {
+                throw new \RuntimeException('Database is gone');
+            }
         };
         $transmitter = new RecordingInvoiceTransmitter();
         $listener = new InvoiceGeneratedListener(new InvoiceTransmissionHandler($transmitter, $journal, new NullLogger()), new NullLogger());
