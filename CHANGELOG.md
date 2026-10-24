@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - Relaunch of a send in error: `RelaunchTransmissionHandler`, `InvoiceDocumentProviderInterface` (option `document_provider`) and `TransmissionNotRelaunchable`.
 - `TransmissionJournalInterface::reopen()` (one conditional update, same line, only for the status `error`). A custom journal has to implement it.
 
+### Fixed
+- The log table gets the collation of the Sylius tables (utf8mb4_unicode_ci) on MySQL and MariaDB, so that the invoice identifier can be compared with the Invoicing plugin table (it failed with "Illegal mix of collations" on MySQL 8).
+
 ### Changed
 - `InvoiceTransmissionHandler::deliver()` is public (the sending part of `handle()`, without the claim of the invoice).
 

@@ -101,6 +101,7 @@ final class RelaunchTransmissionHandlerTest extends TestCase
         $handler = $this->handler($transmitter, $journal, new FixedInvoiceDocumentProvider());
 
         $handler->relaunch('invoice-1');
+
         try {
             $handler->relaunch('invoice-1');
             self::fail('The second relaunch should be refused.');
