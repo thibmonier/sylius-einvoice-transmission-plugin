@@ -10,6 +10,7 @@ use Tests\Tmonier\SyliusEinvoiceTransmissionPlugin\Support\FixedInvoiceDocumentP
 use Tests\Tmonier\SyliusEinvoiceTransmissionPlugin\Support\InMemoryTransmissionJournal;
 use Tmonier\SyliusEinvoiceTransmissionPlugin\Testing\RecordingInvoiceTransmitter;
 use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\InvoiceDocument;
+use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\InvoiceDocumentProviderInterface;
 use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\InvoiceTransmissionHandler;
 use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\InvoiceTransmitterInterface;
 use Tmonier\SyliusEinvoiceTransmissionPlugin\Transmission\RelaunchTransmissionHandler;
@@ -107,6 +108,30 @@ final class RelaunchTransmissionHandlerTest extends TestCase
         }
 
         self::assertCount(1, $transmitter->transmitted());
+    }
+
+    public function testADocumentThatCannotBeProvidedLeavesTheLineInErrorSoThatItCanBeRelaunchedAgain(): void
+    {
+        $journal = new InMemoryTransmissionJournal();
+        $journal->lines['invoice-1'] = ['status' => 'error', 'message' => 'first failure'];
+        $missing = new class() implements InvoiceDocumentProviderInterface {
+            public function provide(string $invoiceId): InvoiceDocument
+            {
+                throw new \RuntimeException('The PDF of the invoice is gone.');
+            }
+        };
+        $transmitter = new RecordingInvoiceTransmitter();
+        $handler = new RelaunchTransmissionHandler(new InvoiceTransmissionHandler($transmitter, $journal, new NullLogger()), $journal, $missing);
+
+        try {
+            $handler->relaunch('invoice-1');
+            self::fail('The missing document should be reported.');
+        } catch (\RuntimeException $exception) {
+            self::assertSame('The PDF of the invoice is gone.', $exception->getMessage());
+        }
+
+        self::assertSame(['status' => 'error', 'message' => 'The PDF of the invoice is gone.'], $journal->lines['invoice-1']);
+        self::assertSame([], $transmitter->transmitted());
     }
 
     private function handler(InvoiceTransmitterInterface $transmitter, InMemoryTransmissionJournal $journal, FixedInvoiceDocumentProvider $provider): RelaunchTransmissionHandler
